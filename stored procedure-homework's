@@ -1,0 +1,103 @@
+----------------------- Q1 ------------------------------------
+
+create or replace function sp_twice(x int) RETURNS int
+language plpgsql AS
+$$
+BEGIN
+RETURN 2*x;
+END;
+$$;
+
+select * from sp_twice(12);
+
+
+----------------------- Q2 ------------------------------------
+
+create or replace function sp_half(x double precision) RETURNS double precision
+language plpgsql AS
+$$
+BEGIN
+RETURN x / 2;
+END;
+$$;
+
+select * from sp_half(17);
+
+-- create or replace function sp_calc(x int , y int , z int, OUT power_x_y_div_z double precision )
+-- language plpgsql AS
+-- $$
+-- BEGIN
+-- power_x_y_div_z := power(x,y) / z;
+-- END;
+-- $$;
+
+----------or this way--------
+
+create or replace function sp_calc(x int , y int , z int) returns double precision 
+language plpgsql AS
+$$
+declare
+power_x_y_div_z double precision:= 0; 
+begin
+power_x_y_div_z := power(x,y) / z;
+return power_x_y_div_z;
+end;
+$$;
+
+select * from sp_calc(2,4,8);
+
+
+
+----------------------- Q3 ------------------------------------
+
+create or replace function sp_twice_xy(x int , y int , out x_multi_2 int, out y_multi_2 int )
+language plpgsql AS
+$$
+
+begin
+x_multi_2  := (select * from sp_twice(x));
+y_multi_2  := (select * from sp_twice(y));
+end;
+$$;
+
+
+select * from sp_twice_xy(11,4);
+
+----------------------- Q4  ------------------------------------
+
+	create or replace FUNCTION sp_statistics(x double precision, y double precision, OUT the_multi double precision, OUT the_div double precision, 
+		OUT sqrt_x double precision, OUT sqrt_y double precision,  OUT power_x_y double precision) AS
+    $$
+        BEGIN
+            the_multi := x * y;
+            the_div := x / y;
+			sqrt_x := sqrt(x);
+			sqrt_y := sqrt(y);
+			power_x_y := power(x,y);
+        END;
+    $$ LANGUAGE plpgsql;
+	
+	select * from sp_statistics(7, 2);
+	
+
+----------------------- Q5 ------------------------------------
+
+create or replace function  sp_factorial (num int ) RETURNS int
+language plpgsql AS
+$$
+ declare 
+ temp int := 0;
+ res int := 1;
+begin
+temp := num;
+while(0<num)
+loop
+res := num * res;
+num := num - 1;
+end loop;
+return res;
+end;
+$$;
+
+select * from  sp_factorial (5);
+
